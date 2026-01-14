@@ -707,31 +707,10 @@ def prepare_map_data(df, selected_states, selected_districts, selected_update_ty
     
     # Standardize state names to match GeoJSON
     state_wise['state'] = state_wise['state'].str.title()
-    
     # Calculate updates per enrolment ratio
     state_wise['updates_per_enrolment'] = (state_wise['updates'] / state_wise['enrolments'].replace(0, 1)).round(2)
     
     return state_wise, filtered_df
-# Instructions for using the interactive map
-st.markdown("""
-### 🎯 How to Use This Map
-1. **Switch Views** - Use the radio buttons above to toggle between:
-   - 📊 **Updates Count**: Total number of updates per state
-   - 👥 **Enrolments**: Total enrolments per state
-   - 📈 **Update Rate**: Ratio of updates to enrolments
-2. **Explore Data**:
-   - 🖱️ **Hover** over any state to see detailed metrics
-   - 🔍 **Click** on states to focus on specific regions
-   - 🔄 **Use the toolbar** (top-right of map) to:
-     - Zoom in/out
-     - Pan around
-     - Reset the view
-     - Take a screenshot
-3. **Download & Explore**:
-   - 📥 **Download** the map data as CSV using the button below
-   - 📋 **View detailed data** in the expandable table
-   - 🔍 **Search and sort** the data table for deeper analysis
-""")
 # Map visualization section
 st.subheader("🗺️ State-wise Aadhaar Data Analysis")
 
