@@ -1,6 +1,0 @@
-tunnel: aadhaar-insights
-credentials-file: C:\Users\shrey\.cloudflared\6cbf3ca2-eec6-49e9-87e4-64e5a850a2b0.json
-ingress:
-  - hostname: aadhaar-insights.shreytailors.tech  # Replace with your domain
-    service: http://localhost:8506
-  - service: http_status:404

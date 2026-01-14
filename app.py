@@ -245,7 +245,17 @@ if selected_center_types:
 
 # Show active filters in the sidebar
 st.sidebar.markdown("---")
-st.sidebar.caption(f"Showing data from {filtered_df['date'].min().strftime('%b %d, %Y')} to {filtered_df['date'].max().strftime('%b %d, %Y')}")
+# Get date range for display
+date_min = filtered_df['date'].min()
+date_max = filtered_df['date'].max()
+    
+# Format the date range string
+if pd.isna(date_min) or pd.isna(date_max):
+    date_range_str = "No date data available"
+else:
+    date_range_str = f"Showing data from {date_min.strftime('%b %d, %Y')} to {date_max.strftime('%b %d, %Y')}"
+    
+st.sidebar.caption(date_range_str)
 st.sidebar.caption(f"{len(filtered_df):,} records match your filters")
 
 # Title and header
@@ -399,15 +409,20 @@ st.markdown("---")
 # KPIs
 col1, col2, col3, col4 = st.columns(4)
 
-# Calculate metrics
-total_enrolments = int(filtered_df.enrolments.sum())
-total_updates = int(filtered_df.updates.sum())
-avg_updates = int(filtered_df.groupby(['year', 'month'])['updates'].sum().mean())
+# Calculate metrics with NaN handling
+total_enrolments = int(filtered_df.enrolments.fillna(0).sum())
+total_updates = int(filtered_df.updates.fillna(0).sum())
+
+# Calculate average updates with NaN handling
+updates_by_month = filtered_df.groupby(['year', 'month'])['updates'].sum()
+avg_updates = int(updates_by_month.mean()) if not updates_by_month.empty else 0
+
+# Calculate update growth with NaN handling
 update_growth = 0
 if len(filtered_df) > 1:
-    updates_by_month = filtered_df.groupby('date')['updates'].sum()
-    if len(updates_by_month) > 1:
-        update_growth = int(((updates_by_month.iloc[-1] / updates_by_month.iloc[0]) - 1) * 100)
+    updates_by_date = filtered_df.groupby('date')['updates'].sum()
+    if len(updates_by_date) > 1 and updates_by_date.iloc[0] != 0:
+        update_growth = int(((updates_by_date.iloc[-1] / updates_by_date.iloc[0]) - 1) * 100)
 
 # Display metrics with delta values
 col1.metric("Total Enrolments", f"{total_enrolments:,}")
@@ -467,6 +482,15 @@ fig.update_xaxes(
 
 st.plotly_chart(fig, config={"displayModeBar": True, "responsive": True})
 
+# Add insights for the time series chart
+with st.expander("📊 Insights", expanded=True):
+    st.markdown("""
+    - The time series shows the trend of Aadhaar enrolments and updates over time
+    - Look for seasonal patterns or significant changes in the data
+    - Compare the relative growth rates of enrolments vs updates
+    - Hover over points to see exact values and dates
+    """)
+
 # Monthly patterns
 st.subheader("📅 Monthly Patterns")
 
@@ -499,6 +523,15 @@ if not filtered_df.empty:
     fig_heatmap.update_xaxes(side="bottom")
     st.plotly_chart(fig_heatmap, config={"displayModeBar": True, "responsive": True})
 
+# Add insights for the monthly heatmap
+with st.expander("📊 Insights", expanded=True):
+    st.markdown("""
+    - The heatmap reveals monthly patterns in Aadhaar updates
+    - Darker colors indicate higher update volumes
+    - Look for consistent monthly patterns or anomalies
+    - Compare year-over-year changes for the same month
+    """)
+
 # Update Type Analysis
 col1, col2 = st.columns(2)
 
@@ -515,6 +548,14 @@ with col1:
                 color_discrete_sequence=px.colors.sequential.Viridis
             )
             st.plotly_chart(fig_pie, config={"displayModeBar": True, "responsive": True})
+        
+            # Add insights for the update type distribution
+            with st.expander("📊 Insights", expanded=True):
+                st.markdown("""
+                - The pie chart shows the distribution of different types of Aadhaar updates
+                - The largest segments represent the most common update types
+                - Consider focusing improvement efforts on frequently updated areas
+                """)
         else:
             st.warning("No update type data available for the selected filters.")
     else:
@@ -537,6 +578,15 @@ with col2:
             )
             fig_bar.update_layout(showlegend=False)
             st.plotly_chart(fig_bar, config={"displayModeBar": True, "responsive": True})
+        
+            # Add insights for the top districts
+            with st.expander("📊 Insights", expanded=True):
+                st.markdown("""
+                - The horizontal bar chart shows the top performing districts
+                - Color coding indicates different states
+                - Consider analyzing what makes these districts perform well
+                - Look for opportunities to replicate successful strategies in other areas
+                """)
         else:
             st.warning("No district data available.")
     else:
@@ -544,6 +594,11 @@ with col2:
 
 # Anomaly Detection
 st.subheader("🚨 Anomaly Detection")
+st.markdown("""
+This section identifies unusual patterns in the data that may require further investigation. 
+Anomalies are detected using z-scores, highlighting values that are more than 2 standard 
+deviations from the mean for each district.
+""")
 
 if not filtered_df.empty:
     # Calculate z-scores for updates by district
@@ -707,17 +762,37 @@ def prepare_map_data(df, selected_states, selected_districts, selected_update_ty
     
     # Standardize state names to match GeoJSON
     state_wise['state'] = state_wise['state'].str.title()
+    
     # Calculate updates per enrolment ratio
     state_wise['updates_per_enrolment'] = (state_wise['updates'] / state_wise['enrolments'].replace(0, 1)).round(2)
     
     return state_wise, filtered_df
+
 # Map visualization section
 st.subheader("🗺️ State-wise Aadhaar Data Analysis")
 
-# Add map type selector
+# Add a description that updates based on filters
+filter_description = "Showing data"
+if 'All' not in selected_states and selected_states:
+    filter_description += f" for {', '.join(selected_states)}"
+if 'All' not in selected_districts and selected_districts:
+    filter_description += f" in districts: {', '.join(selected_districts)}"
+if selected_update_types:
+    filter_description += f" | Update types: {', '.join(selected_update_types)}"
+if selected_age_groups:
+    filter_description += f" | Age groups: {', '.join(selected_age_groups)}"
+if selected_genders:
+    filter_description += f" | Genders: {', '.join(selected_genders)}"
+if selected_center_types:
+    filter_description += f" | Center types: {', '.join(selected_center_types)}"
+
+st.markdown(f"*{filter_description}*")
+
+# Add map type selector with better descriptions
 map_type = st.radio(
-    "Select View:",
+    "Select Map View:",
     ["Updates Count", "Enrolments", "Update Rate"],
+    help="Choose what data to visualize on the map. 'Update Rate' shows updates per enrolment.",
     horizontal=True,
     key="map_view_selector"
 )
@@ -728,93 +803,90 @@ try:
     if india_geojson is None:
         raise Exception("Could not load GeoJSON data")
     
-    # Apply filters and prepare data
-    map_data, filtered_data = prepare_map_data(
-        df,
-        selected_states,
-        selected_districts,
-        selected_update_types,
-        selected_age_groups,
-        selected_genders,
-        selected_center_types,
-        start_date,
-        end_date
-    )
-    
+    # Add a spinner while processing map data
+    with st.spinner('Updating map with current filters...'):
+        # Apply filters and prepare data
+        map_data, filtered_data = prepare_map_data(
+            df,
+            selected_states,
+            selected_districts,
+            selected_update_types,
+            selected_age_groups,
+            selected_genders,
+            selected_center_types,
+            start_date,
+            end_date
+        )
+        
     if map_data.empty:
         st.warning("No data available for the selected filters. Try adjusting your filters.")
         st.stop()
     
-    # Configure map based on selected view
+    # Create choropleth map with better visualization
     if map_type == "Updates Count":
         color_col = 'updates'
-        size_col = 'updates'
-        title = 'Aadhaar Updates by State'
-        color_label = 'Number of Updates'
-        hover_template = (
-            "<b>%{hovertext}</b><br><br>" +
-            "📊 Updates: %{customdata[1]:,}<br>" +
-            "👥 Enrolments: %{customdata[2]:,}<br>" +
-            "📅 Records: %{customdata[4]:,}" +
-            "<extra></extra>"
-        )
+        title = f'Total Aadhaar Updates by State\n({filter_description})'
+        color_scale = 'YlOrRd'
+        hover_data = {
+            'state': True,
+            'updates': ':,',
+            'enrolments': ':,',
+            'updates_per_enrolment': ':.2f'
+        }
+        hover_name = 'state'
+        
     elif map_type == "Enrolments":
         color_col = 'enrolments'
-        size_col = 'enrolments'
-        title = 'Aadhaar Enrolments by State'
-        color_label = 'Number of Enrolments'
-        hover_template = (
-            "<b>%{hovertext}</b><br><br>" +
-            "👥 Enrolments: %{customdata[2]:,}<br>" +
-            "📊 Updates: %{customdata[1]:,}<br>" +
-            "📅 Records: %{customdata[4]:,}" +
-            "<extra></extra>"
-        )
+        title = f'Total Aadhaar Enrolments by State\n({filter_description})'
+        color_scale = 'YlGnBu'
+        hover_data = {
+            'state': True,
+            'enrolments': ':,',
+            'updates': ':,',
+            'updates_per_enrolment': ':.2f'
+        }
+        hover_name = 'state'
+        
     else:  # Update Rate
         color_col = 'updates_per_enrolment'
-        size_col = 'updates'
-        title = 'Update Rate (Updates per Enrolment)'
-        color_label = 'Update Rate'
-        hover_template = (
-            "<b>%{hovertext}</b><br><br>" +
-            "🔄 Update Rate: %{customdata[3]:.2f}<br>" +
-            "📊 Updates: %{customdata[1]:,}<br>" +
-            "👥 Enrolments: %{customdata[2]:,}" +
-            "<extra></extra>"
-        )
-    
-    # Create the map
-    fig = px.scatter_geo(
-        map_data,
-        locationmode='country names',
-        locations='state',
-        color=color_col,
-        size=size_col,
-        hover_name='state',
-        hover_data={
-            'state': False,  # Already in hover_name
-            'updates': True,
-            'enrolments': True,
+        title = f'Update Rate (Updates per Enrolment)\n({filter_description})'
+        color_scale = 'RdYlGn'
+        hover_data = {
+            'state': True,
             'updates_per_enrolment': ':.2f',
-            'date': True  # This will show the count of records
-        },
-        size_max=35,
-        title=title,
-        color_continuous_scale='Viridis',
-        projection="natural earth"
+            'updates': ':,',
+            'enrolments': ':'
+        }
+        hover_name = 'state'
+    
+    # Set color label based on map type
+    if map_type == "Updates Count":
+        color_label = "Updates Count"
+    elif map_type == "Enrolments":
+        color_label = "Enrolments"
+    else:  # Update Rate
+        color_label = "Update Rate"
+    
+    # Define hover template
+    hover_template = (
+        "<b>%{location}</b><br>" +
+        "Updates: %{customdata[0]:,}<br>" +
+        "Enrolments: %{customdata[1]:,}<br>" +
+        "Update Rate: %{customdata[2]:.2f}<br>" +
+        "<extra></extra>"
     )
     
-    # Update hover template
-    fig.update_traces(hovertemplate=hover_template)
+    # Create the choropleth map with enhanced features
+    fig = px.choropleth(
+        map_data,
+        geojson=india_geojson,
+        locations='state',
+        featureidkey='properties.NAME_1',
+        color=color_col,
+        color_continuous_scale=color_scale
+    )
     
-    # Update map layout
     fig.update_geos(
-        visible=True,
-        resolution=50,
-        showcountries=True,
-        countrycolor="Black",
-        showsubunits=True,
-        subunitcolor="Grey",
         showcoastlines=True,
         coastlinecolor="Black",
         showocean=True,
@@ -822,7 +894,10 @@ try:
         showlakes=True,
         lakecolor="LightBlue",
         showland=True,
-        landcolor="WhiteSmoke"
+        landcolor="WhiteSmoke",
+        visible=False,
+        center=dict(lat=20.5, lon=78.9),
+        projection_scale=4.5
     )
     
     fig.update_layout(
@@ -830,9 +905,6 @@ try:
         height=650,
         geo=dict(
             scope='asia',
-            center=dict(lat=20.5, lon=78.9),
-            projection_scale=4.5,
-            landcolor='LightGrey',
             showframe=False
         ),
         coloraxis_colorbar=dict(
