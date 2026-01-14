@@ -465,7 +465,7 @@ fig.update_xaxes(
     )
 )
 
-st.plotly_chart(fig, width='stretch')
+st.plotly_chart(fig, config={"displayModeBar": True, "responsive": True})
 
 # Monthly patterns
 st.subheader("📅 Monthly Patterns")
@@ -497,7 +497,7 @@ if not filtered_df.empty:
     )
     
     fig_heatmap.update_xaxes(side="bottom")
-    st.plotly_chart(fig_heatmap, width='stretch')
+    st.plotly_chart(fig_heatmap, config={"displayModeBar": True, "responsive": True})
 
 # Update Type Analysis
 col1, col2 = st.columns(2)
@@ -514,7 +514,7 @@ with col1:
                 hole=0.4,
                 color_discrete_sequence=px.colors.sequential.Viridis
             )
-            st.plotly_chart(fig_pie, width='stretch')
+            st.plotly_chart(fig_pie, config={"displayModeBar": True, "responsive": True})
         else:
             st.warning("No update type data available for the selected filters.")
     else:
@@ -536,7 +536,7 @@ with col2:
                 color_discrete_sequence=px.colors.sequential.Viridis
             )
             fig_bar.update_layout(showlegend=False)
-            st.plotly_chart(fig_bar, width='stretch')
+            st.plotly_chart(fig_bar, config={"displayModeBar": True, "responsive": True})
         else:
             st.warning("No district data available.")
     else:
@@ -854,7 +854,7 @@ try:
     )
     
     # Display the map
-    st.plotly_chart(fig, use_container_width=True, use_container_height=True)
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": True, "responsive": True})
     
     # Add summary statistics
     col1, col2, col3 = st.columns(3)
