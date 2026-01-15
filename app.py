@@ -36,6 +36,11 @@ st.markdown("""
         padding-bottom: 2rem;
     }
     
+    /* Prevent layout shaking by forcing scrollbar */
+    .stApp {
+        overflow-y: scroll;
+    }
+    
     /* Sidebar styling */
     [data-testid="stSidebar"] {
         background-color: #f8f9fa;
@@ -488,7 +493,7 @@ fig.update_xaxes(
     )
 )
 
-st.plotly_chart(fig, config={"displayModeBar": True, "responsive": True})
+st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": True, "responsive": True})
 
 # Add insights for the time series chart
 with st.expander("📊 Insights", expanded=True):
@@ -529,7 +534,7 @@ if not filtered_df.empty:
     )
     
     fig_heatmap.update_xaxes(side="bottom")
-    st.plotly_chart(fig_heatmap, config={"displayModeBar": True, "responsive": True})
+    st.plotly_chart(fig_heatmap, use_container_width=True, config={"displayModeBar": True, "responsive": True})
 
 # Add insights for the monthly heatmap
 with st.expander("📊 Insights", expanded=True):
@@ -555,7 +560,8 @@ with col1:
                 hole=0.4,
                 color_discrete_sequence=px.colors.sequential.Viridis
             )
-            st.plotly_chart(fig_pie, config={"displayModeBar": True, "responsive": True})
+            fig_pie.update_layout(height=400)
+            st.plotly_chart(fig_pie, use_container_width=True, config={"displayModeBar": True, "responsive": True})
         
             # Add insights for the update type distribution
             with st.expander("📊 Insights", expanded=True):
@@ -584,8 +590,8 @@ with col2:
                 labels={'updates': 'Total Updates', 'district': 'District'},
                 color_discrete_sequence=px.colors.sequential.Viridis
             )
-            fig_bar.update_layout(showlegend=False)
-            st.plotly_chart(fig_bar, config={"displayModeBar": True, "responsive": True})
+            fig_bar.update_layout(showlegend=False, height=400)
+            st.plotly_chart(fig_bar, use_container_width=True, config={"displayModeBar": True, "responsive": True})
         
             # Add insights for the top districts
             with st.expander("📊 Insights", expanded=True):
