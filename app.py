@@ -1,3 +1,11 @@
+# Add these lines after your imports
+import warnings
+warnings.filterwarnings("ignore", message="No runtime found, using MemoryCacheStorageManager")
+warnings.filterwarnings("ignore", message="The default of observed=False is deprecated")
+
+# Update file paths to be relative
+DATA_PATH = 'aadhaar_data.csv'
+GEOJSON_PATH = 'india_states.geojson'
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -881,7 +889,7 @@ try:
         map_data,
         geojson=india_geojson,
         locations='state',
-        featureidkey='properties.NAME_1',
+        featureidkey='properties.ST_NM',
         color=color_col,
         color_continuous_scale=color_scale
     )
@@ -923,6 +931,34 @@ try:
             font_size=12,
             font_family="Arial"
         )
+    )
+
+    # Add annotation for active filters
+    active_filters_list = []
+    if 'All' not in selected_states and selected_states:
+        active_filters_list.append(f"States: {len(selected_states)}")
+    if 'All' not in selected_districts and selected_districts:
+        active_filters_list.append(f"Districts: {len(selected_districts)}")
+    if selected_update_types:
+        active_filters_list.append(f"Types: {', '.join(selected_update_types)}")
+    if selected_age_groups:
+        active_filters_list.append(f"Age: {', '.join(selected_age_groups)}")
+    if selected_genders:
+        active_filters_list.append(f"Gender: {', '.join(selected_genders)}")
+    
+    filter_text = "<b>Active Filters:</b><br>" + "<br>".join(active_filters_list) if active_filters_list else "<b>Active Filters:</b><br>None (Showing All)"
+
+    fig.add_annotation(
+        text=filter_text,
+        align='left',
+        showarrow=False,
+        xref='paper', yref='paper',
+        x=0.02, y=0.98,
+        bgcolor="rgba(255, 255, 255, 0.9)",
+        bordercolor="#333",
+        borderwidth=1,
+        borderpad=10,
+        font=dict(size=11, color="black")
     )
     
     # Display the map

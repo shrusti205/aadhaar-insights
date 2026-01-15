@@ -1,18 +1,30 @@
+---
+title: Aadhaar Insights Dashboard
+emoji: 📊
+colorFrom: blue
+colorTo: indigo
+sdk: streamlit
+sdk_version: "1.35.0"
+python_version: "3.10"
+app_file: app.py
+pinned: false
+---
+
 # Aadhaar Insights Dashboard
 
-A Streamlit-based dashboard for analyzing Aadhaar enrollment and update data across different Indian states.
+An interactive dashboard for analyzing Aadhaar enrollment and update statistics across India.
 
-## Features
+## 🚀 Features
 
-- 📊 Interactive state-wise visualization of Aadhaar updates and enrollments
-- 📅 Date range filtering
-- 📍 Location-based filtering (state and district)
-- 👥 Demographic filtering (age group, gender)
-- 📥 Data export capabilities
+- Interactive map visualization of Aadhaar data
+- State-wise and district-wise analysis
+- Time-series trends and insights
+- Demographic breakdowns
+- Real-time data filtering and exploration
 
-## Setup
+## 🛠️ Running Locally
 
-1. **Clone the repository**
+1. Clone the repository
    ```bash
-   git clone [https://github.com/shrusti205/aadhaar-insights.git](https://github.com/shrusti205/aadhaar-insights.git)
+   git clone https://github.com/shrusti205/aadhaar-insights.git
    cd aadhaar-insights
