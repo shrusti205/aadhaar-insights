@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import json
-import json
+import time
 import glob
 import os
 from datetime import datetime
@@ -122,9 +122,7 @@ def load_detailed_data():
                     'age_5_17': 'age_5_17'
                 }, inplace=True)
                 detailed_data['enrolment'] = enrol_df
-                st.success(f"✅ Loaded {len(enrol_df):,} enrolment records")
-            else:
-                st.warning("⚠️ No enrolment data found")
+                progress_bar.progress(33, text=f"✅ Loaded {len(enrol_df):,} enrolment records")
             
             # Load Biometric Data
             bio_df = load_folder("api_data_aadhar_biometric", progress_bar)
@@ -136,9 +134,7 @@ def load_detailed_data():
                     'bio_age_5_17': 'bio_age_5_17'
                 }, inplace=True)
                 detailed_data['biometric'] = bio_df
-                st.success(f"✅ Loaded {len(bio_df):,} biometric records")
-            else:
-                st.warning("⚠️ No biometric data found")
+                progress_bar.progress(66, text=f"✅ Loaded {len(bio_df):,} biometric records")
             
             # Load Demographic Data
             demo_df = load_folder("api_data_aadhar_demographic", progress_bar)
@@ -150,13 +146,10 @@ def load_detailed_data():
                     'demo_age_5_17': 'demo_age_5_17'
                 }, inplace=True)
                 detailed_data['demographic'] = demo_df
-                st.success(f"✅ Loaded {len(demo_df):,} demographic records")
-            else:
-                st.warning("⚠️ No demographic data found")
+                progress_bar.progress(100, text=f"✅ Loaded {len(demo_df):,} demographic records")
                 
-            # Final progress update
-            progress_bar.progress(100, text="Data loading complete!")
-            time.sleep(0.5)  # Let users see the completion message
+            # Brief pause to show completion
+            time.sleep(0.3)
             
     except Exception as e:
         st.error(f"❌ Error loading detailed data: {str(e)}")
