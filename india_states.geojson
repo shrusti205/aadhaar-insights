@@ -1,0 +1,365 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Andaman and Nicobar"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [92.5, 10.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Andhra Pradesh"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.5, 16.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Arunachal Pradesh"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [94.0, 28.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Assam"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [92.5, 26.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Bihar"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.0, 25.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Chandigarh"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.8, 30.7]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Chhattisgarh"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [82.0, 21.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Dadra and Nagar Haveli"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [73.1, 20.2]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Daman and Diu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [72.8, 20.4]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Delhi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.1, 28.7]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Goa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [74.0, 15.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Gujarat"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [71.5, 22.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Haryana"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.0, 29.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Himachal Pradesh"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.0, 31.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Jammu and Kashmir"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.5, 33.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Jharkhand"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [85.5, 23.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Karnataka"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.5, 14.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Kerala"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.5, 10.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Lakshadweep"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [72.5, 10.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Madhya Pradesh"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.0, 23.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Maharashtra"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [76.0, 19.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Manipur"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [94.0, 24.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Meghalaya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [91.5, 25.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Mizoram"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [92.5, 23.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Nagaland"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [94.5, 26.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Odisha"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [84.5, 20.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Puducherry"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.8, 11.9]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Punjab"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [75.5, 31.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Rajasthan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [73.5, 26.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Sikkim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [88.5, 27.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Tamil Nadu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.5, 11.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Telangana"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.5, 18.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Tripura"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [91.5, 23.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Uttar Pradesh"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [80.5, 27.0]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "Uttarakhand"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [79.5, 30.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ST_NM": "West Bengal"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [87.5, 24.0]
+      }
+    }
+  ]
+}
