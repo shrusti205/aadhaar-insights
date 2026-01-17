@@ -1,16 +1,6 @@
----
-title: Aadhaar Insights Dashboard
-emoji: 📊
-colorFrom: blue
-colorTo: indigo
-sdk: streamlit
-sdk_version: "1.35.0"
-python_version: "3.10"
-app_file: app.py
-pinned: false
----
-
 # Aadhaar Insights Dashboard
+
+**Live Demo**: [https://aadhaar-insights.onrender.com](https://aadhaar-insights.onrender.com)
 
 An interactive dashboard for analyzing Aadhaar enrollment and update statistics across India.
 
