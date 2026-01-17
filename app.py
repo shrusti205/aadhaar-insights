@@ -57,52 +57,113 @@ def load_data():
         st.error(f"Error loading data: {e}")
         return pd.DataFrame()
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=3600, show_spinner="Loading detailed data...")
 def load_detailed_data():
-    """Loads and merges split CSVs from api_data folders"""
+    """
+    Loads and merges split CSVs from api_data folders with optimized performance
+    and better error handling.
+    """
     detailed_data = {}
     
-    # helper to load all csvs in a folder
-    def load_folder(folder_name):
+    def load_folder(folder_name, progress_bar=None):
+        """Helper to load all CSV files in a folder with progress tracking"""
         path = os.path.join(os.getcwd(), folder_name, "*.csv")
         files = glob.glob(path)
+        
         if not files:
+            if progress_bar:
+                progress_bar.progress(100, text=f"No files found in {folder_name}")
             return pd.DataFrame()
+            
         dfs = []
-        for f in files:
+        total_files = len(files)
+        
+        for i, f in enumerate(files, 1):
             try:
-                dfs.append(pd.read_csv(f))
+                # Use low_memory=False to avoid mixed type warnings
+                # Use chunks for very large files
+                chunk_size = 10000
+                chunks = []
+                for chunk in pd.read_csv(f, low_memory=False, chunksize=chunk_size):
+                    chunks.append(chunk)
+                
+                if chunks:
+                    dfs.append(pd.concat(chunks, ignore_index=True))
+                
+                if progress_bar:
+                    progress = int((i / total_files) * 100)
+                    progress_bar.progress(progress, text=f"Loading {folder_name}... ({i}/{total_files} files)")
+                    
             except Exception as e:
-                print(f"Error reading {f}: {e}")
+                print(f"Error reading {os.path.basename(f)}: {str(e)[:200]}...")
+                continue
+                
         if not dfs:
             return pd.DataFrame()
+            
+        # Concatenate all dataframes at once
         return pd.concat(dfs, ignore_index=True)
 
+    # Create a progress container
+    progress_container = st.empty()
+    
     try:
-        # Load Enrolment
-        enrol_df = load_folder("api_data_aadhar_enrolment")
-        if not enrol_df.empty:
-            # Standardize
-            enrol_df['date'] = pd.to_datetime(enrol_df['date'], format='%d-%m-%Y', errors='coerce')
-            enrol_df.rename(columns={'age_18_greater': 'age_18_plus'}, inplace=True)
-            detailed_data['enrolment'] = enrol_df
-
-        # Load Biometric
-        bio_df = load_folder("api_data_aadhar_biometric")
-        if not bio_df.empty:
-            bio_df['date'] = pd.to_datetime(bio_df['date'], format='%d-%m-%Y', errors='coerce')
-            bio_df.rename(columns={'bio_age_17_': 'bio_age_18_plus'}, inplace=True)
-            detailed_data['biometric'] = bio_df
-
-        # Load Demographic
-        demo_df = load_folder("api_data_aadhar_demographic")
-        if not demo_df.empty:
-            demo_df['date'] = pd.to_datetime(demo_df['date'], format='%d-%m-%Y', errors='coerce')
-            demo_df.rename(columns={'demo_age_17_': 'demo_age_18_plus'}, inplace=True)
-            detailed_data['demographic'] = demo_df
+        # Initialize progress bar
+        with st.spinner("Loading detailed data..."):
+            progress_bar = progress_container.progress(0, text="Starting data load...")
+            
+            # Load Enrolment Data
+            enrol_df = load_folder("api_data_aadhar_enrolment", progress_bar)
+            if not enrol_df.empty:
+                enrol_df['date'] = pd.to_datetime(enrol_df['date'], format='%d-%m-%Y', errors='coerce')
+                enrol_df.rename(columns={
+                    'age_18_greater': 'age_18_plus',
+                    'age_0_5': 'age_0_5',
+                    'age_5_17': 'age_5_17'
+                }, inplace=True)
+                detailed_data['enrolment'] = enrol_df
+                st.success(f"✅ Loaded {len(enrol_df):,} enrolment records")
+            else:
+                st.warning("⚠️ No enrolment data found")
+            
+            # Load Biometric Data
+            bio_df = load_folder("api_data_aadhar_biometric", progress_bar)
+            if not bio_df.empty:
+                bio_df['date'] = pd.to_datetime(bio_df['date'], format='%d-%m-%Y', errors='coerce')
+                bio_df.rename(columns={
+                    'bio_age_17_': 'bio_age_18_plus',
+                    'bio_age_0_5': 'bio_age_0_5',
+                    'bio_age_5_17': 'bio_age_5_17'
+                }, inplace=True)
+                detailed_data['biometric'] = bio_df
+                st.success(f"✅ Loaded {len(bio_df):,} biometric records")
+            else:
+                st.warning("⚠️ No biometric data found")
+            
+            # Load Demographic Data
+            demo_df = load_folder("api_data_aadhar_demographic", progress_bar)
+            if not demo_df.empty:
+                demo_df['date'] = pd.to_datetime(demo_df['date'], format='%d-%m-%Y', errors='coerce')
+                demo_df.rename(columns={
+                    'demo_age_17_': 'demo_age_18_plus',
+                    'demo_age_0_5': 'demo_age_0_5',
+                    'demo_age_5_17': 'demo_age_5_17'
+                }, inplace=True)
+                detailed_data['demographic'] = demo_df
+                st.success(f"✅ Loaded {len(demo_df):,} demographic records")
+            else:
+                st.warning("⚠️ No demographic data found")
+                
+            # Final progress update
+            progress_bar.progress(100, text="Data loading complete!")
+            time.sleep(0.5)  # Let users see the completion message
             
     except Exception as e:
-        st.error(f"Error loading detailed data: {e}")
+        st.error(f"❌ Error loading detailed data: {str(e)}")
+        st.exception(e)  # Show full traceback in the UI for debugging
+    finally:
+        # Clear the progress bar when done
+        progress_container.empty()
     
     return detailed_data
 
