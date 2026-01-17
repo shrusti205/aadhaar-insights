@@ -173,8 +173,7 @@ if df.empty:
     st.error("Main data file (aadhaar_data.csv) not found or empty.")
     st.stop()
 
-# Pre-load detailed data for all tabs
-detailed = load_detailed_data()
+# Don't pre-load detailed data - load it lazily in tabs that need it
 
 # ----------------- SIDEBAR FILTERS -----------------
 st.sidebar.title('🎛️ Analytics Controls')
@@ -434,6 +433,8 @@ with tab3:
     # --- NEW: Pincode Analysis ---
     if 'All' not in selected_districts and selected_districts:
         st.subheader(f"📍 Pincode Level Analysis")
+        # Load detailed data only when needed for pincode analysis
+        detailed = load_detailed_data()
         if 'enrolment' in detailed and not detailed['enrolment'].empty:
             pin_df = detailed['enrolment']
             pin_df = pin_df[pin_df['district'].isin(selected_districts)]
