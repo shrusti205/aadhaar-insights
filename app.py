@@ -116,7 +116,11 @@ def load_geojson():
 
 df = load_data()
 if df.empty:
+    st.error("Main data file (aadhaar_data.csv) not found or empty.")
     st.stop()
+
+# Pre-load detailed data for all tabs
+detailed = load_detailed_data()
 
 # ----------------- SIDEBAR FILTERS -----------------
 st.sidebar.title('🎛️ Analytics Controls')
@@ -313,18 +317,20 @@ with tab2:
     
     if 'enrolment' in detailed and not detailed['enrolment'].empty:
         e_df = detailed['enrolment']
-        # Filter by state if selected
         if 'All' not in selected_states:
             e_df = e_df[e_df['state'].isin(selected_states)]
         
-        # Aggregate by age group
-        age_cols = ['age_0_5', 'age_5_17', 'age_18_plus']
-        age_sums = e_df[age_cols].sum().reset_index()
-        age_sums.columns = ['Age Group', 'Count']
-        
-        fig_age = px.bar(age_sums, x='Age Group', y='Count', color='Age Group', 
-                         title='Total Enrolments by Age Group', text_auto=True)
-        st.plotly_chart(fig_age, use_container_width=True)
+        # Aggregate by age group with defensive check
+        age_cols = [c for c in ['age_0_5', 'age_5_17', 'age_18_plus'] if c in e_df.columns]
+        if age_cols:
+            age_sums = e_df[age_cols].sum().reset_index()
+            age_sums.columns = ['Age Group', 'Count']
+            
+            fig_age = px.bar(age_sums, x='Age Group', y='Count', color='Age Group', 
+                             title='Total Enrolments by Age Group', text_auto=True)
+            st.plotly_chart(fig_age, use_container_width=True)
+        else:
+            st.info("Age group columns missing in enrolment data.")
     else:
         st.info("Detailed enrolment data not available for age analysis.")
 
@@ -372,25 +378,27 @@ with tab3:
         st.plotly_chart(fig_hm, use_container_width=True)
 
     # --- NEW: Pincode Analysis ---
-    if 'All' not in selected_districts:
-        st.subheader(f"📍 Pincode Level Analysis for Selected Districts")
-        detailed = load_detailed_data()
-        if 'enrolment' in detailed:
+    if 'All' not in selected_districts and selected_districts:
+        st.subheader(f"📍 Pincode Level Analysis")
+        if 'enrolment' in detailed and not detailed['enrolment'].empty:
             pin_df = detailed['enrolment']
-            # Filter for selected districts
             pin_df = pin_df[pin_df['district'].isin(selected_districts)]
             
             if not pin_df.empty:
                 # Top 15 Pincodes by Enrolment
-                top_pins = pin_df.groupby('pincode')[['age_0_5', 'age_5_17', 'age_18_plus']].sum()
-                top_pins['Total'] = top_pins.sum(axis=1)
-                top_pins = top_pins.sort_values('Total', ascending=False).head(15).reset_index()
-                top_pins['pincode'] = top_pins['pincode'].astype(str)
-                
-                fig_pin = px.bar(top_pins, x='pincode', y='Total', color='Total',
-                                title="Top 15 Pincodes by Enrolment Activity",
-                                labels={'Total': 'Enrolments', 'pincode': 'Pincode'})
-                st.plotly_chart(fig_pin, use_container_width=True)
+                cols_to_sum = [c for c in ['age_0_5', 'age_5_17', 'age_18_plus'] if c in pin_df.columns]
+                if cols_to_sum:
+                    top_pins = pin_df.groupby('pincode')[cols_to_sum].sum()
+                    top_pins['Total'] = top_pins.sum(axis=1)
+                    top_pins = top_pins.sort_values('Total', ascending=False).head(15).reset_index()
+                    top_pins['pincode'] = top_pins['pincode'].astype(str)
+                    
+                    fig_pin = px.bar(top_pins, x='pincode', y='Total', color='Total',
+                                    title="Top 15 Pincodes by Enrolment Activity",
+                                    labels={'Total': 'Enrolments', 'pincode': 'Pincode'})
+                    st.plotly_chart(fig_pin, use_container_width=True)
+                else:
+                    st.info("Required age columns missing for pincode analysis.")
             else:
                 st.info("No pincode data found for selected districts.")
     else:
