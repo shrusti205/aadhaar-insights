@@ -18,6 +18,7 @@ var/
 wheels/
 *.egg-info/
 .installed.cfg
+<<<<<<< HEAD
 
 # Environment variables
 .env
@@ -63,6 +64,8 @@ Thumbs.db
 *.xls
 *.db
 *.sqlite
+=======
+>>>>>>> 6fc5f19289eb2feadcd16757ce654a4d94cfe15b
 *.egg
 
 # Virtual Environment
