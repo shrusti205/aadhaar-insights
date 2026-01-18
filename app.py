@@ -366,7 +366,11 @@ with tab2:
     st.markdown("---")
     st.subheader("📊 Detailed Age Group Analytics (New Data)")
     
+    if st.checkbox("🔽 Load detailed government datasets (may take time)", key="load_demo"):
     detailed = load_detailed_data()
+else:
+    detailed = {}
+
     
     if 'enrolment' in detailed and not detailed['enrolment'].empty:
         e_df = detailed['enrolment']
@@ -434,7 +438,11 @@ with tab3:
     if 'All' not in selected_districts and selected_districts:
         st.subheader(f"📍 Pincode Level Analysis")
         # Load detailed data only when needed for pincode analysis
-        detailed = load_detailed_data()
+        if st.checkbox("🔽 Load pincode-level datasets (may take time)", key="load_pincode"):
+    detailed = load_detailed_data()
+else:
+    detailed = {}
+
         if 'enrolment' in detailed and not detailed['enrolment'].empty:
             pin_df = detailed['enrolment']
             pin_df = pin_df[pin_df['district'].isin(selected_districts)]
